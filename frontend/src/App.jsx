@@ -48,6 +48,7 @@ import AppointmentBooking    from "./Pages/customer/AppointmentBooking";
 import SubmitReview          from "./Pages/customer/SubmitReview";
 import CustomerHistoryLogs   from "./Pages/customer/CustomerHistoryLogs";
 import CustomerNotifications from "./Pages/customer/CustomerNotifications";
+import ServiceHistory from "./pages/customer/ServiceHistory";
 
 function App() {
   return (
@@ -111,6 +112,7 @@ function App() {
               <Route path="/customer/review"        element={<SubmitReview />} />
               <Route path="/customer/history"       element={<CustomerHistoryLogs />} />
               <Route path="/customer/notifications" element={<CustomerNotifications />} />
+              <Route path="/customer/service-history" element={<ServiceHistory />} />
             </Route>
           </Route>
 
