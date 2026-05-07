@@ -4,6 +4,7 @@ import {
   Search, Users, Car, Phone, Fingerprint, ChevronDown, Filter,
   FileText, Eye, Mail, LayoutDashboard, UserPlus, ShoppingCart, Settings,
 } from "lucide-react";
+import StaffSidebar from "../components/StaffSideBar";
 
 function CustomerSearch() {
   const location = useLocation();
@@ -141,22 +142,7 @@ function CustomerSearch() {
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden font-sans">
-      <aside className="hidden lg:flex flex-col w-64 bg-slate-800 text-slate-300 shadow-xl z-10">
-        <div className="p-6 border-b border-slate-700">
-          <h1 className="text-2xl font-bold text-white tracking-tight">
-            AutoLogistics
-          </h1>
-          <p className="text-sm text-indigo-400 mt-1">Staff Portal</p>
-        </div>
-
-        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-          <NavItem to="/staff/dashboard" icon={<LayoutDashboard size={20} />} label="Dashboard" active={location.pathname === "/staff/dashboard"} />
-          <NavItem to="/staff/customers" icon={<Search size={20} />} label="Customer Search" active={location.pathname === "/staff/customers"} />
-          <NavItem to="/staff/register" icon={<UserPlus size={20} />} label="Register Customer" active={location.pathname === "/staff/register"} />
-          <NavItem to="/staff/sales" icon={<ShoppingCart size={20} />} label="Point of Sale" active={location.pathname === "/staff/sales"} />
-          <NavItem to="/staff/reports" icon={<Settings size={20} />} label="Customer Reports" active={location.pathname === "/staff/reports"} />
-        </nav>
-      </aside>
+      <StaffSidebar />
 
       <main className="flex-1 flex flex-col h-screen overflow-hidden">
         <header className="bg-white border-b border-gray-200 px-8 py-5 flex justify-between items-center sticky top-0 z-10">

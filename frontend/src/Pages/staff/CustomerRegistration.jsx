@@ -5,6 +5,7 @@ import {
   UserPlus, Car, User, Phone, Mail,
   MapPin, CheckCircle, LayoutDashboard, Search, Settings
 } from "lucide-react";
+import StaffSidebar from "../components/StaffSideBar";
 
 function CustomerRegistration() {
   const location = useLocation();
@@ -72,19 +73,7 @@ function CustomerRegistration() {
     <div className="flex h-screen bg-slate-50 overflow-hidden font-sans">
 
       {/* Staff Sidebar */}
-      <aside className="hidden lg:flex flex-col w-64 bg-slate-800 text-slate-300 shadow-xl z-10">
-        <div className="p-6 border-b border-slate-700">
-          <h1 className="text-2xl font-bold text-white tracking-tight">AutoLogistics</h1>
-          <p className="text-sm text-indigo-400 mt-1">Staff Portal</p>
-        </div>
-
-        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-          <NavItem to="/staff/customers" icon={<Search size={20} />} label="Customer Search" active={location.pathname === '/staff/customers'} />
-          <NavItem to="/staff/register" icon={<UserPlus size={20} />} label="Register Customer" active={location.pathname === '/staff/register'} />
-          <NavItem to="/staff/sales" icon={<LayoutDashboard size={20} />} label="Sales & Invoices" active={location.pathname === '/staff/sales'} />
-          <NavItem to="/staff/reports" icon={<Settings size={20} />} label="Customer Reports" active={location.pathname === '/staff/reports'} />
-        </nav>
-      </aside>
+      <StaffSidebar />
 
       <main className="flex-1 flex flex-col h-screen overflow-hidden">
 
