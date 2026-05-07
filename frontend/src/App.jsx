@@ -1,6 +1,4 @@
-/**
- * App.jsx — Route Configuration
- */
+/*Route Configuration*/
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
 import { ProtectedRoute, PublicOnlyRoute } from "./components/RouteGuards";
@@ -74,10 +72,13 @@ function App() {
           <Route element={<ProtectedRoute roles={["Staff"]} />}>
             <Route path="/staff/dashboard" element={<StaffDashboard />} />
             <Route path="/staff/customers" element={<CustomerSearch />} />
+
+            {/* Feature 8 customer details route */}
+            <Route path="/staff/customers/:id" element={<CustomerDetails />} />
+
             <Route path="/staff/register" element={<CustomerRegistration />} />
             <Route path="/staff/invoice" element={<EmailInvoice />} />
             <Route path="/staff/sales" element={<SalesInvoice />} />
-            <Route path="/staff/details" element={<CustomerDetails />} />
             <Route path="/staff/reports" element={<CustomerReports />} />
           </Route>
 
