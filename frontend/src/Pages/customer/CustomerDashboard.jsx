@@ -9,12 +9,14 @@ import {
   ChevronRight,
   Loader2,
   User,
+  Clock,
 } from "lucide-react";
 import api from "../../services/api";
 
 function CustomerDashboard() {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState(null);
+  const [history, setHistory] = useState(null);
   const [error, setError] = useState(null);
 
   const loadDashboard = async () => {
@@ -22,9 +24,15 @@ function CustomerDashboard() {
     setError(null);
 
     try {
-      const { data } = await api.get("/customer-profile/me");
-      setProfile(data);
-    } catch {
+      const [profileRes, historyRes] = await Promise.all([
+        api.get("/customer-profile/me"),
+        api.get("/customers/my-history"),
+      ]);
+
+      setProfile(profileRes.data);
+      setHistory(historyRes.data);
+    } catch (err) {
+      console.error("Dashboard load failed:", err);
       setError("Failed to load dashboard. Please refresh or login again.");
     } finally {
       setLoading(false);
@@ -61,6 +69,13 @@ function CustomerDashboard() {
 
   const firstName = profile?.fullName?.split(" ")[0] || "Customer";
   const vehicles = profile?.vehicles || [];
+  const serviceHistory = history?.serviceHistory || [];
+  const purchaseHistory = history?.purchaseHistory || [];
+  const reviewHistory = history?.reviewHistory || [];
+
+  const pendingAppointments = serviceHistory.filter(
+    (a) => (a.status || "").toLowerCase() === "pending"
+  ).length;
 
   const stats = [
     {
@@ -70,17 +85,18 @@ function CustomerDashboard() {
     },
     {
       label: "Appointments",
-      value: "—",
+      value: serviceHistory.length,
+      sub: `${pendingAppointments} pending`,
       icon: <Calendar size={22} />,
     },
     {
       label: "Invoices",
-      value: "—",
+      value: purchaseHistory.length,
       icon: <FileText size={22} />,
     },
     {
       label: "Reviews",
-      value: "—",
+      value: reviewHistory.length,
       icon: <Star size={22} />,
     },
   ];
@@ -125,6 +141,12 @@ function CustomerDashboard() {
                   {stat.value}
                 </p>
                 <p className="text-sm text-slate-500 mt-1">{stat.label}</p>
+                {stat.sub && (
+                  <p className="text-xs text-amber-600 font-semibold mt-2 flex items-center gap-1">
+                    <Clock size={13} />
+                    {stat.sub}
+                  </p>
+                )}
               </div>
             ))}
           </div>
@@ -144,12 +166,6 @@ function CustomerDashboard() {
               <div className="text-center py-8 text-slate-400">
                 <Car size={40} className="mx-auto mb-3 opacity-30" />
                 <p>No vehicles registered yet.</p>
-                <Link
-                  to="/customer/profile"
-                  className="text-slate-800 text-sm font-semibold mt-2 inline-block hover:underline"
-                >
-                  Add your first vehicle →
-                </Link>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -176,21 +192,9 @@ function CustomerDashboard() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-            <QuickLink
-              to="/customer/appointments"
-              icon={<Calendar size={22} />}
-              label="Book Appointment"
-            />
-            <QuickLink
-              to="/customer/history"
-              icon={<History size={22} />}
-              label="Service History"
-            />
-            <QuickLink
-              to="/customer/review"
-              icon={<Star size={22} />}
-              label="Submit Review"
-            />
+            <QuickLink to="/customer/appointments" icon={<Calendar size={22} />} label="Book Appointment" />
+            <QuickLink to="/customer/service-history" icon={<History size={22} />} label="Service History" />
+            <QuickLink to="/customer/review" icon={<Star size={22} />} label="Submit Review" />
           </div>
         </div>
       </main>

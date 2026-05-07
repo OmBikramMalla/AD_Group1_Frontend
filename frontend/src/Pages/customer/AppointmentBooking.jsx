@@ -37,6 +37,7 @@ function AppointmentBooking() {
       try {
         const { data } = await api.get("/customer-profile/me");
         const list = data.vehicles || [];
+
         setVehicles(list);
 
         if (list.length > 0) {
@@ -63,12 +64,15 @@ function AppointmentBooking() {
     try {
       await api.post("/appointments", {
         vehicleId: Number(bookingData.vehicleId),
-        appointmentDate: `${bookingData.date}T${bookingData.time}`,
+        appointmentDate: new Date(
+          `${bookingData.date}T${bookingData.time}`
+        ).toISOString(),
         serviceType: bookingData.serviceType,
         description: bookingData.notes,
       });
 
       setIsSuccess(true);
+
       setBookingData((prev) => ({
         ...prev,
         date: "",
@@ -91,12 +95,12 @@ function AppointmentBooking() {
 
     try {
       await api.post("/part-requests", {
-        partName: partsData.partName,
-        vehicleMake: partsData.vehicleMake,
-        description: partsData.description,
+        requestedPartName: partsData.partName,
+        vehicleInfo: `${partsData.vehicleMake} - ${partsData.description}`,
       });
 
       setIsSuccess(true);
+
       setPartsData({
         partName: "",
         vehicleMake: "",
@@ -113,7 +117,7 @@ function AppointmentBooking() {
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-slate-50">
+      <div className="flex min-h-screen items-center justify-center bg-slate-50">
         <Loader2 size={36} className="animate-spin text-slate-700" />
       </div>
     );
@@ -121,22 +125,24 @@ function AppointmentBooking() {
 
   return (
     <>
-      <header className="bg-white border-b border-slate-200 px-8 py-5 flex justify-between items-center z-10 sticky top-0">
-        <div>
-          <h2 className="text-2xl font-bold text-slate-800">Booking & Requests</h2>
-          <p className="text-sm text-slate-500 mt-1">
-            Schedule services or request unavailable parts
-          </p>
-        </div>
+      <header className="bg-white border-b border-slate-200 px-8 py-5 sticky top-0 z-10">
+        <h2 className="text-2xl font-bold text-slate-800">
+          Booking & Requests
+        </h2>
+        <p className="text-sm text-slate-500 mt-1">
+          Schedule services or request unavailable parts
+        </p>
       </header>
 
-      <div className="flex-1 overflow-y-auto p-4 sm:p-8 bg-slate-50">
+      <div className="p-4 sm:p-8 bg-slate-50 min-h-screen">
         <div className="max-w-4xl mx-auto">
           {isSuccess && (
             <div className="mb-6 bg-emerald-50 border border-emerald-200 text-emerald-700 px-6 py-4 rounded-2xl flex items-center gap-4 shadow-sm">
               <CheckCircle className="text-emerald-500" size={28} />
               <div>
-                <p className="font-bold text-lg">Request Submitted Successfully!</p>
+                <p className="font-bold text-lg">
+                  Request Submitted Successfully!
+                </p>
                 <p className="text-sm text-emerald-600 mt-0.5">
                   Our team will get back to you shortly.
                 </p>
@@ -181,14 +187,17 @@ function AppointmentBooking() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                        <Car size={16} className="text-slate-600" /> Select Vehicle
+                        <Car size={16} /> Select Vehicle
                       </label>
 
                       <select
                         required
                         value={bookingData.vehicleId}
                         onChange={(e) =>
-                          setBookingData({ ...bookingData, vehicleId: e.target.value })
+                          setBookingData({
+                            ...bookingData,
+                            vehicleId: e.target.value,
+                          })
                         }
                         className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-700 outline-none"
                       >
@@ -197,7 +206,8 @@ function AppointmentBooking() {
                         ) : (
                           vehicles.map((v) => (
                             <option key={v.id} value={v.id}>
-                              {v.vehicleBrand} {v.vehicleModel} ({v.vehicleNumber})
+                              {v.vehicleBrand} {v.vehicleModel} (
+                              {v.vehicleNumber})
                             </option>
                           ))
                         )}
@@ -206,13 +216,16 @@ function AppointmentBooking() {
 
                     <div className="space-y-2">
                       <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                        <Wrench size={16} className="text-slate-600" /> Service Type
+                        <Wrench size={16} /> Service Type
                       </label>
 
                       <select
                         value={bookingData.serviceType}
                         onChange={(e) =>
-                          setBookingData({ ...bookingData, serviceType: e.target.value })
+                          setBookingData({
+                            ...bookingData,
+                            serviceType: e.target.value,
+                          })
                         }
                         className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-700 outline-none"
                       >
@@ -225,7 +238,7 @@ function AppointmentBooking() {
 
                     <div className="space-y-2">
                       <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                        <Calendar size={16} className="text-slate-600" /> Preferred Date
+                        <Calendar size={16} /> Preferred Date
                       </label>
 
                       <input
@@ -233,7 +246,10 @@ function AppointmentBooking() {
                         required
                         value={bookingData.date}
                         onChange={(e) =>
-                          setBookingData({ ...bookingData, date: e.target.value })
+                          setBookingData({
+                            ...bookingData,
+                            date: e.target.value,
+                          })
                         }
                         className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-700 outline-none"
                       />
@@ -241,7 +257,7 @@ function AppointmentBooking() {
 
                     <div className="space-y-2">
                       <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                        <Clock size={16} className="text-slate-600" /> Preferred Time
+                        <Clock size={16} /> Preferred Time
                       </label>
 
                       <input
@@ -249,7 +265,10 @@ function AppointmentBooking() {
                         required
                         value={bookingData.time}
                         onChange={(e) =>
-                          setBookingData({ ...bookingData, time: e.target.value })
+                          setBookingData({
+                            ...bookingData,
+                            time: e.target.value,
+                          })
                         }
                         className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-700 outline-none"
                       />
@@ -262,11 +281,14 @@ function AppointmentBooking() {
 
                       <textarea
                         rows="4"
-                        placeholder="Please describe any issues or specific requests..."
                         value={bookingData.notes}
                         onChange={(e) =>
-                          setBookingData({ ...bookingData, notes: e.target.value })
+                          setBookingData({
+                            ...bookingData,
+                            notes: e.target.value,
+                          })
                         }
+                        placeholder="Please describe any issues or specific requests..."
                         className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-700 outline-none resize-none"
                       />
                     </div>
@@ -284,7 +306,8 @@ function AppointmentBooking() {
                 <form onSubmit={handlePartsSubmit} className="space-y-6">
                   <div className="bg-amber-50 border border-amber-200 p-4 rounded-xl mb-6">
                     <p className="text-sm text-amber-800 font-medium">
-                      Can't find a part in our standard inventory? Fill out this form and our team will locate it for you.
+                      Can't find a part in our standard inventory? Fill out this
+                      form and our team will locate it for you.
                     </p>
                   </div>
 
@@ -300,7 +323,10 @@ function AppointmentBooking() {
                         placeholder="e.g. Alternator"
                         value={partsData.partName}
                         onChange={(e) =>
-                          setPartsData({ ...partsData, partName: e.target.value })
+                          setPartsData({
+                            ...partsData,
+                            partName: e.target.value,
+                          })
                         }
                         className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-700 outline-none"
                       />
@@ -317,7 +343,10 @@ function AppointmentBooking() {
                         placeholder="e.g. Toyota Corolla"
                         value={partsData.vehicleMake}
                         onChange={(e) =>
-                          setPartsData({ ...partsData, vehicleMake: e.target.value })
+                          setPartsData({
+                            ...partsData,
+                            vehicleMake: e.target.value,
+                          })
                         }
                         className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-700 outline-none"
                       />
@@ -334,7 +363,10 @@ function AppointmentBooking() {
                         placeholder="Please provide any relevant details..."
                         value={partsData.description}
                         onChange={(e) =>
-                          setPartsData({ ...partsData, description: e.target.value })
+                          setPartsData({
+                            ...partsData,
+                            description: e.target.value,
+                          })
                         }
                         className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-700 outline-none resize-none"
                       />

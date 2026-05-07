@@ -7,20 +7,22 @@ import {
   Calendar,
   Star,
   History,
-  Bell,
   LogOut,
   Menu,
   X,
   Car,
+  Package,
+  Wrench,
 } from "lucide-react";
 
 const NAV_ITEMS = [
-  { to: "/customer/dashboard",     label: "Dashboard",     icon: LayoutDashboard },
-  { to: "/customer/profile",       label: "My Profile",    icon: User },
-  { to: "/customer/appointments",  label: "Appointments",  icon: Calendar },
-  { to: "/customer/review",        label: "Submit Review", icon: Star },
-  { to: "/customer/history",       label: "History Logs",  icon: History },
-  { to: "/customer/notifications", label: "Notifications", icon: Bell },
+  { to: "/customer/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/customer/profile", label: "My Profile", icon: User },
+  { to: "/customer/appointments", label: "Appointments", icon: Calendar },
+  { to: "/customer/review", label: "Submit Review", icon: Star },
+  { to: "/customer/history", label: "History Logs", icon: History },
+  { to: "/customer/purchase-history", label: "Purchase History", icon: Package },
+  { to: "/customer/service-history", label: "Service History", icon: Wrench },
 ];
 
 export default function CustomerLayout() {
@@ -35,8 +37,6 @@ export default function CustomerLayout() {
 
   return (
     <div className="flex h-screen bg-slate-50 overflow-hidden">
-
-      {/* ── Mobile overlay ── */}
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black/40 z-20 lg:hidden"
@@ -44,9 +44,6 @@ export default function CustomerLayout() {
         />
       )}
 
-      {/* ══════════════════════════════════════════
-          SIDEBAR
-      ══════════════════════════════════════════ */}
       <aside
         className={`
           fixed lg:static inset-y-0 left-0 z-30
@@ -55,7 +52,6 @@ export default function CustomerLayout() {
           ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
         `}
       >
-        {/* Brand */}
         <div className="flex items-center gap-3 px-6 py-5 border-b border-slate-700/60">
           <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-600/30">
             <Car size={20} className="text-white" />
@@ -64,7 +60,7 @@ export default function CustomerLayout() {
             <p className="font-bold text-sm leading-tight">AutoLogistics</p>
             <p className="text-xs text-slate-400">Customer Portal</p>
           </div>
-          {/* Close btn – mobile only */}
+
           <button
             onClick={() => setSidebarOpen(false)}
             className="ml-auto lg:hidden text-slate-400 hover:text-white transition"
@@ -73,18 +69,21 @@ export default function CustomerLayout() {
           </button>
         </div>
 
-        {/* User pill */}
         <div className="mx-4 mt-4 px-4 py-3 bg-slate-800 rounded-xl flex items-center gap-3">
           <div className="w-9 h-9 rounded-full bg-indigo-500 flex items-center justify-center font-bold text-sm flex-shrink-0">
             {(user?.name ?? "C")[0].toUpperCase()}
           </div>
+
           <div className="overflow-hidden">
-            <p className="text-sm font-semibold truncate">{user?.name ?? "Customer"}</p>
-            <p className="text-xs text-slate-400 truncate">{user?.email ?? ""}</p>
+            <p className="text-sm font-semibold truncate">
+              {user?.name ?? "Customer"}
+            </p>
+            <p className="text-xs text-slate-400 truncate">
+              {user?.email ?? ""}
+            </p>
           </div>
         </div>
 
-        {/* Nav */}
         <nav className="flex-1 px-3 mt-5 space-y-1 overflow-y-auto">
           {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
             <NavLink
@@ -105,7 +104,6 @@ export default function CustomerLayout() {
           ))}
         </nav>
 
-        {/* Logout */}
         <div className="p-4 border-t border-slate-700/60">
           <button
             onClick={handleLogout}
@@ -117,11 +115,7 @@ export default function CustomerLayout() {
         </div>
       </aside>
 
-      {/* ══════════════════════════════════════════
-          MAIN CONTENT AREA
-      ══════════════════════════════════════════ */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top bar – mobile only */}
         <div className="lg:hidden flex items-center gap-4 px-4 py-3 bg-white border-b border-slate-200">
           <button
             onClick={() => setSidebarOpen(true)}
@@ -129,15 +123,17 @@ export default function CustomerLayout() {
           >
             <Menu size={22} />
           </button>
+
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center">
               <Car size={14} className="text-white" />
             </div>
-            <span className="font-bold text-slate-800 text-sm">AutoLogistics</span>
+            <span className="font-bold text-slate-800 text-sm">
+              AutoLogistics
+            </span>
           </div>
         </div>
 
-        {/* Page outlet */}
         <main className="flex-1 overflow-y-auto flex flex-col">
           <Outlet />
         </main>
