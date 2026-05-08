@@ -1,14 +1,26 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Search,
   UserPlus,
   ShoppingCart,
   Settings,
+  LogOut,
 } from "lucide-react";
 
 function StaffSidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("jwtToken");
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("role");
+    localStorage.removeItem("user");
+
+    navigate("/login");
+  };
 
   return (
     <aside className="hidden lg:flex flex-col w-64 bg-slate-800 text-slate-300 shadow-xl z-10">
@@ -26,24 +38,28 @@ function StaffSidebar() {
           label="Dashboard"
           active={location.pathname === "/staff/dashboard"}
         />
+
         <NavItem
           to="/staff/customers"
           icon={<Search size={20} />}
           label="Customer Search"
           active={location.pathname.startsWith("/staff/customers")}
         />
+
         <NavItem
           to="/staff/register"
           icon={<UserPlus size={20} />}
           label="Register Customer"
           active={location.pathname === "/staff/register"}
         />
+
         <NavItem
           to="/staff/sales"
           icon={<ShoppingCart size={20} />}
           label="Sales Invoice"
           active={location.pathname === "/staff/sales"}
         />
+
         <NavItem
           to="/staff/reports"
           icon={<Settings size={20} />}
@@ -51,6 +67,17 @@ function StaffSidebar() {
           active={location.pathname === "/staff/reports"}
         />
       </nav>
+
+      {/* Bottom Section */}
+      <div className="p-4 border-t border-slate-700">
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 p-3 rounded-xl text-slate-300 hover:bg-red-600 hover:text-white transition-all duration-200"
+        >
+          <LogOut size={20} />
+          <span className="font-medium">Logout</span>
+        </button>
+      </div>
     </aside>
   );
 }
