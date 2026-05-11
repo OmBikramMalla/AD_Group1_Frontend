@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import {
   LayoutDashboard,
   User,
@@ -13,6 +13,7 @@ import {
   Car,
   Package,
   Wrench,
+  Lock,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -23,6 +24,7 @@ const NAV_ITEMS = [
   { to: "/customer/history", label: "History Logs", icon: History },
   { to: "/customer/purchase-history", label: "Purchase History", icon: Package },
   { to: "/customer/service-history", label: "Service History", icon: Wrench },
+  { to: "/customer/change-password", label: "Change Password", icon: Lock },
 ];
 
 export default function CustomerLayout() {

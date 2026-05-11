@@ -1,9 +1,9 @@
 /*Route Configuration*/
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
-import { ProtectedRoute, PublicOnlyRoute } from "./components/RouteGuards";
+import { ProtectedRoute, PublicOnlyRoute } from "./pages/components/RouteGuards";
 import { AuthProvider } from "./context/AuthContext";
-import CustomerLayout from "./components/CustomerLayout";
+import CustomerLayout from "./pages/components/CustomerLayout";
 
 // Public Pages
 import Login from "./Pages/public/Login";
@@ -30,6 +30,7 @@ import CustomerRegistration from "./Pages/staff/CustomerRegistration";
 import SalesInvoice from "./Pages/staff/SalesInvoice";
 import CustomerDetails from "./Pages/staff/CustomerDetails";
 import CustomerReports from "./Pages/staff/CustomerReports";
+import StaffAppointments from "./Pages/staff/StaffAppointments";
 
 // Customer Pages
 import CustomerDashboard from "./Pages/customer/CustomerDashboard";
@@ -39,6 +40,7 @@ import SubmitReview from "./Pages/customer/SubmitReview";
 import CustomerHistoryLogs from "./Pages/customer/CustomerHistoryLogs";
 import ServiceHistory from "./Pages/customer/ServiceHistory";
 import PurchaseHistory from "./Pages/customer/PurchaseHistory";
+import ChangePassword from "./Pages/customer/ChangePassword";
 
 function App() {
   return (
@@ -80,6 +82,7 @@ function App() {
             <Route path="/staff/invoice" element={<EmailInvoice />} />
             <Route path="/staff/sales" element={<SalesInvoice />} />
             <Route path="/staff/reports" element={<CustomerReports />} />
+            <Route path="/staff/appointments" element={<StaffAppointments />} />
           </Route>
 
           {/* Customer */}
@@ -92,6 +95,7 @@ function App() {
               <Route path="/customer/history" element={<CustomerHistoryLogs />} />
               <Route path="/customer/purchase-history" element={<PurchaseHistory />} />
               <Route path="/customer/service-history" element={<ServiceHistory />} />
+              <Route path="/customer/change-password" element={<ChangePassword />} />
             </Route>
           </Route>
 
