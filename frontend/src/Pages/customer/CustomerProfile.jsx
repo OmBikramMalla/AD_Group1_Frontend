@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from "react";
 import {
-  User, Mail, Phone, Edit3, Car, Plus,
-  Shield, Check, Loader2
+  User,
+  Mail,
+  Phone,
+  Edit3,
+  Car,
+  Plus,
+  Shield,
+  Check,
+  Loader2,
+  Trash2,
+  Pencil,
 } from "lucide-react";
 import api from "../../services/api";
 
@@ -33,6 +42,9 @@ function CustomerProfile() {
     vehicleBrand: "",
   });
   const [isAddingVehicle, setIsAddingVehicle] = useState(false);
+
+  const [editingVehicle, setEditingVehicle] = useState(null);
+  const [isUpdatingVehicle, setIsUpdatingVehicle] = useState(false);
 
   const fetchProfile = async () => {
     setIsLoading(true);
@@ -71,7 +83,6 @@ function CustomerProfile() {
 
     try {
       const { data } = await api.put("/customer-profile/me", editData);
-
       const updated = data.profile;
 
       setProfileData({
@@ -111,10 +122,54 @@ function CustomerProfile() {
       });
 
       setShowAddVehicleModal(false);
+      setSaveMsg("Vehicle added successfully.");
     } catch {
       alert("Failed to add vehicle.");
     } finally {
       setIsAddingVehicle(false);
+    }
+  };
+
+  const handleUpdateVehicle = async (e) => {
+    e.preventDefault();
+
+    if (!editingVehicle) return;
+
+    try {
+      setIsUpdatingVehicle(true);
+
+      const { data } = await api.put(
+        `/customer-profile/vehicles/${editingVehicle.id}`,
+        editingVehicle
+      );
+
+      setVehicles((prev) =>
+        prev.map((v) => (v.id === editingVehicle.id ? data.vehicle : v))
+      );
+
+      setEditingVehicle(null);
+      setSaveMsg("Vehicle updated successfully.");
+    } catch {
+      alert("Failed to update vehicle.");
+    } finally {
+      setIsUpdatingVehicle(false);
+    }
+  };
+
+  const handleDeleteVehicle = async (vehicleId) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this vehicle?"
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      await api.delete(`/customer-profile/vehicles/${vehicleId}`);
+
+      setVehicles((prev) => prev.filter((v) => v.id !== vehicleId));
+      setSaveMsg("Vehicle deleted successfully.");
+    } catch {
+      alert("Failed to delete vehicle.");
     }
   };
 
@@ -152,7 +207,9 @@ function CustomerProfile() {
 
         <div className="flex items-center gap-4">
           <div className="text-right hidden sm:block">
-            <p className="text-sm font-bold text-gray-900">{profileData.fullName}</p>
+            <p className="text-sm font-bold text-gray-900">
+              {profileData.fullName}
+            </p>
             <p className="text-xs text-gray-500">{profileData.email}</p>
           </div>
 
@@ -237,7 +294,11 @@ function CustomerProfile() {
                         disabled={isSaving}
                         className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg font-medium hover:bg-slate-800 transition"
                       >
-                        {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
+                        {isSaving ? (
+                          <Loader2 size={16} className="animate-spin" />
+                        ) : (
+                          <Check size={16} />
+                        )}
                         {isSaving ? "Saving..." : "Save Changes"}
                       </button>
                     </div>
@@ -251,7 +312,9 @@ function CustomerProfile() {
                       icon={<User size={18} className="text-gray-400" />}
                       editing={isEditing}
                       value={editData.fullName}
-                      onChange={(v) => setEditData((p) => ({ ...p, fullName: v }))}
+                      onChange={(v) =>
+                        setEditData((p) => ({ ...p, fullName: v }))
+                      }
                       display={profileData.fullName}
                     />
 
@@ -261,7 +324,9 @@ function CustomerProfile() {
                       editing={isEditing}
                       value={editData.email}
                       type="email"
-                      onChange={(v) => setEditData((p) => ({ ...p, email: v }))}
+                      onChange={(v) =>
+                        setEditData((p) => ({ ...p, email: v }))
+                      }
                       display={profileData.email}
                     />
                   </div>
@@ -273,7 +338,9 @@ function CustomerProfile() {
                       editing={isEditing}
                       value={editData.phone}
                       type="tel"
-                      onChange={(v) => setEditData((p) => ({ ...p, phone: v }))}
+                      onChange={(v) =>
+                        setEditData((p) => ({ ...p, phone: v }))
+                      }
                       display={profileData.phone}
                     />
                   </div>
@@ -286,7 +353,8 @@ function CustomerProfile() {
                   Security
                 </h3>
                 <p className="text-sm text-gray-500">
-                  Your account is protected using JWT-based authentication and role-based access.
+                  Your account is protected using JWT-based authentication and
+                  role-based access.
                 </p>
               </div>
             </div>
@@ -295,7 +363,9 @@ function CustomerProfile() {
           {activeTab === "vehicles" && (
             <div>
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-bold text-gray-900">Registered Vehicles</h3>
+                <h3 className="text-xl font-bold text-gray-900">
+                  Registered Vehicles
+                </h3>
 
                 <button
                   onClick={() => setShowAddVehicleModal(true)}
@@ -311,9 +381,12 @@ function CustomerProfile() {
                     <Car size={40} className="text-gray-300" />
                   </div>
 
-                  <h4 className="text-xl font-bold text-gray-800">No Vehicles Yet</h4>
+                  <h4 className="text-xl font-bold text-gray-800">
+                    No Vehicles Yet
+                  </h4>
                   <p className="text-gray-500 mt-2 mb-6 max-w-md">
-                    Add your vehicles to book services and track maintenance history.
+                    Add your vehicles to book services and track maintenance
+                    history.
                   </p>
 
                   <button
@@ -335,7 +408,7 @@ function CustomerProfile() {
                           <Car size={32} />
                         </div>
 
-                        <div>
+                        <div className="flex-1">
                           <h4 className="text-lg font-bold text-gray-900">
                             {vehicle.vehicleBrand} {vehicle.vehicleModel}
                           </h4>
@@ -343,6 +416,24 @@ function CustomerProfile() {
                           <span className="mt-2 inline-block px-3 py-1 bg-gray-100 text-gray-800 text-xs font-bold rounded-md tracking-wider border border-gray-200">
                             {vehicle.vehicleNumber}
                           </span>
+
+                          <div className="mt-4 flex gap-3">
+                            <button
+                              onClick={() => setEditingVehicle(vehicle)}
+                              className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-800 rounded-lg text-sm font-semibold hover:bg-slate-200 transition"
+                            >
+                              <Pencil size={15} />
+                              Edit
+                            </button>
+
+                            <button
+                              onClick={() => handleDeleteVehicle(vehicle.id)}
+                              className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg text-sm font-semibold hover:bg-red-100 transition"
+                            >
+                              <Trash2 size={15} />
+                              Delete
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -355,93 +446,144 @@ function CustomerProfile() {
       </div>
 
       {showAddVehicleModal && (
-        <div className="fixed inset-0 bg-gray-900/40 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-              <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                <Car className="text-slate-700" size={20} /> Add New Vehicle
-              </h3>
+        <VehicleModal
+          title="Add New Vehicle"
+          icon={<Car className="text-slate-700" size={20} />}
+          vehicle={newVehicle}
+          setVehicle={setNewVehicle}
+          onClose={() => setShowAddVehicleModal(false)}
+          onSubmit={handleAddVehicle}
+          submitText={isAddingVehicle ? "Adding..." : "Save Vehicle"}
+          loading={isAddingVehicle}
+        />
+      )}
 
-              <button
-                onClick={() => setShowAddVehicleModal(false)}
-                className="text-gray-400 hover:text-gray-600 p-1"
-              >
-                ✕
-              </button>
-            </div>
-
-            <form onSubmit={handleAddVehicle} className="p-6 space-y-4">
-              <div>
-                <label className="text-sm font-semibold text-gray-700">Brand</label>
-                <input
-                  type="text"
-                  value={newVehicle.vehicleBrand}
-                  onChange={(e) =>
-                    setNewVehicle((p) => ({ ...p, vehicleBrand: e.target.value }))
-                  }
-                  placeholder="e.g. Toyota"
-                  required
-                  className="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-slate-700 outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="text-sm font-semibold text-gray-700">Model</label>
-                <input
-                  type="text"
-                  value={newVehicle.vehicleModel}
-                  onChange={(e) =>
-                    setNewVehicle((p) => ({ ...p, vehicleModel: e.target.value }))
-                  }
-                  placeholder="e.g. Corolla"
-                  required
-                  className="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-slate-700 outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="text-sm font-semibold text-gray-700">Vehicle Number</label>
-                <input
-                  type="text"
-                  value={newVehicle.vehicleNumber}
-                  onChange={(e) =>
-                    setNewVehicle((p) => ({
-                      ...p,
-                      vehicleNumber: e.target.value.toUpperCase(),
-                    }))
-                  }
-                  placeholder="BA-20-PA-1234"
-                  required
-                  className="w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-slate-700 outline-none uppercase"
-                />
-              </div>
-
-              <div className="pt-4 flex gap-3 justify-end border-t border-gray-100">
-                <button
-                  type="button"
-                  onClick={() => setShowAddVehicleModal(false)}
-                  className="px-5 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition"
-                >
-                  Cancel
-                </button>
-
-                <button
-                  type="submit"
-                  disabled={isAddingVehicle}
-                  className="px-5 py-2.5 bg-slate-900 text-white rounded-lg font-bold hover:bg-slate-800 transition disabled:opacity-50"
-                >
-                  {isAddingVehicle ? "Adding..." : "Save Vehicle"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+      {editingVehicle && (
+        <VehicleModal
+          title="Edit Vehicle"
+          icon={<Pencil className="text-slate-700" size={20} />}
+          vehicle={editingVehicle}
+          setVehicle={setEditingVehicle}
+          onClose={() => setEditingVehicle(null)}
+          onSubmit={handleUpdateVehicle}
+          submitText={isUpdatingVehicle ? "Updating..." : "Update Vehicle"}
+          loading={isUpdatingVehicle}
+        />
       )}
     </>
   );
 }
 
-const Field = ({ label, icon, editing, value, onChange, display, type = "text" }) => (
+function VehicleModal({
+  title,
+  icon,
+  vehicle,
+  setVehicle,
+  onClose,
+  onSubmit,
+  submitText,
+  loading,
+}) {
+  return (
+    <div className="fixed inset-0 bg-gray-900/40 z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+          <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+            {icon}
+            {title}
+          </h3>
+
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 p-1"
+          >
+            ✕
+          </button>
+        </div>
+
+        <form onSubmit={onSubmit} className="p-6 space-y-4">
+          <VehicleInput
+            label="Brand"
+            value={vehicle.vehicleBrand}
+            onChange={(value) =>
+              setVehicle((p) => ({ ...p, vehicleBrand: value }))
+            }
+            placeholder="e.g. Toyota"
+          />
+
+          <VehicleInput
+            label="Model"
+            value={vehicle.vehicleModel}
+            onChange={(value) =>
+              setVehicle((p) => ({ ...p, vehicleModel: value }))
+            }
+            placeholder="e.g. Corolla"
+          />
+
+          <VehicleInput
+            label="Vehicle Number"
+            value={vehicle.vehicleNumber}
+            onChange={(value) =>
+              setVehicle((p) => ({
+                ...p,
+                vehicleNumber: value.toUpperCase(),
+              }))
+            }
+            placeholder="BA-20-PA-1234"
+            uppercase
+          />
+
+          <div className="pt-4 flex gap-3 justify-end border-t border-gray-100">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={loading}
+              className="px-5 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition"
+            >
+              Cancel
+            </button>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-5 py-2.5 bg-slate-900 text-white rounded-lg font-bold hover:bg-slate-800 transition disabled:opacity-50"
+            >
+              {submitText}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function VehicleInput({ label, value, onChange, placeholder, uppercase = false }) {
+  return (
+    <div>
+      <label className="text-sm font-semibold text-gray-700">{label}</label>
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        required
+        className={`w-full mt-1 p-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-slate-700 outline-none ${
+          uppercase ? "uppercase" : ""
+        }`}
+      />
+    </div>
+  );
+}
+
+const Field = ({
+  label,
+  icon,
+  editing,
+  value,
+  onChange,
+  display,
+  type = "text",
+}) => (
   <div>
     <label className="text-sm font-medium text-gray-500">{label}</label>
 

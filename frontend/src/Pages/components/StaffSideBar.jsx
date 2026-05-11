@@ -6,7 +6,9 @@ import {
   ShoppingCart,
   Settings,
   LogOut,
+  Mail,
 } from "lucide-react";
+import { CalendarDays } from "lucide-react";
 
 function StaffSidebar() {
   const location = useLocation();
@@ -54,10 +56,24 @@ function StaffSidebar() {
         />
 
         <NavItem
+          to="/staff/appointments"
+          icon={<CalendarDays size={20} />}
+          label="Appointments"
+          active={location.pathname === "/staff/appointments"}
+        />
+        
+        <NavItem
           to="/staff/sales"
           icon={<ShoppingCart size={20} />}
           label="Sales Invoice"
           active={location.pathname === "/staff/sales"}
+        />
+
+        <NavItem
+          to="/staff/invoice"
+          icon={<Mail size={20} />}
+          label="Email Invoices"
+          active={location.pathname === "/staff/invoice"}
         />
 
         <NavItem
