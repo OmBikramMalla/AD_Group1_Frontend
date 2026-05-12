@@ -7,25 +7,23 @@ import {
   Settings,
   LogOut,
   Mail,
+  CalendarDays,
+  Home,
 } from "lucide-react";
-import { CalendarDays } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
 
 function StaffSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("jwtToken");
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("role");
-    localStorage.removeItem("user");
-
-    navigate("/login");
+    logout();
+    navigate("/", { replace: true });
   };
 
   return (
-    <aside className="hidden lg:flex flex-col w-64 bg-slate-800 text-slate-300 shadow-xl z-10">
+    <aside className="hidden lg:flex flex-col w-64 bg-slate-800 text-slate-300 shadow-xl z-10 min-h-screen">
       <div className="p-6 border-b border-slate-700">
         <h1 className="text-2xl font-bold text-white tracking-tight">
           AutoLogistics
@@ -34,6 +32,13 @@ function StaffSidebar() {
       </div>
 
       <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+        <NavItem
+          to="/"
+          icon={<Home size={20} />}
+          label="Home"
+          active={location.pathname === "/"}
+        />
+
         <NavItem
           to="/staff/dashboard"
           icon={<LayoutDashboard size={20} />}
@@ -61,7 +66,7 @@ function StaffSidebar() {
           label="Appointments"
           active={location.pathname === "/staff/appointments"}
         />
-        
+
         <NavItem
           to="/staff/sales"
           icon={<ShoppingCart size={20} />}
@@ -84,7 +89,6 @@ function StaffSidebar() {
         />
       </nav>
 
-      {/* Bottom Section */}
       <div className="p-4 border-t border-slate-700">
         <button
           onClick={handleLogout}

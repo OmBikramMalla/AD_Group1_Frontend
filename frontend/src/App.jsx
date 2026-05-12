@@ -14,7 +14,6 @@ import Home from "./Pages/public/Home";
 
 // Admin Pages
 import AdminDashboard from "./Pages/admin/AdminDashboard";
-import AdminProfile from "./Pages/admin/AdminProfile";
 import FinancialReports from "./Pages/admin/FinancialReports";
 import StaffManagement from "./Pages/admin/StaffManagement";
 import PartsManagement from "./Pages/admin/PartsManagement";
@@ -61,7 +60,6 @@ function App() {
           {/* Admin */}
           <Route element={<ProtectedRoute roles={["Admin"]} />}>
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/profile" element={<AdminProfile />} />
             <Route path="/admin/reports" element={<FinancialReports />} />
             <Route path="/admin/staff" element={<StaffManagement />} />
             <Route path="/admin/parts" element={<PartsManagement />} />

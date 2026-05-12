@@ -1,8 +1,14 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
-import api from "../services/api";
+import api, { clearAuthStorage } from "../services/api";
 
 const AuthContext = createContext(null);
+
+const getStoredToken = () =>
+  localStorage.getItem("token") ||
+  localStorage.getItem("jwtToken") ||
+  localStorage.getItem("authToken");
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -34,9 +40,7 @@ export function AuthProvider({ children }) {
       "";
 
     const id =
-      decoded[
-        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
-      ] ??
+      decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"] ??
       decoded.sub ??
       decoded.nameid ??
       decoded.id ??
@@ -49,20 +53,36 @@ export function AuthProvider({ children }) {
     return { token, role, name, email, id };
   };
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
+  const restoreAuth = () => {
+    const token = getStoredToken();
 
-    if (token) {
-      try {
-        const userData = getDecodedUser(token);
-        setUser(userData);
-      } catch {
-        localStorage.clear();
-        setUser(null);
-      }
+    if (!token) {
+      setUser(null);
+      return;
     }
 
+    try {
+      const userData = getDecodedUser(token);
+      setUser(userData);
+    } catch {
+      clearAuthStorage();
+      setUser(null);
+    }
+  };
+
+  useEffect(() => {
+    restoreAuth();
     setLoading(false);
+
+    const handleAuthChanged = () => {
+      restoreAuth();
+    };
+
+    window.addEventListener("authChanged", handleAuthChanged);
+
+    return () => {
+      window.removeEventListener("authChanged", handleAuthChanged);
+    };
   }, []);
 
   const login = async (email, password) => {
@@ -82,14 +102,13 @@ export function AuthProvider({ children }) {
     localStorage.setItem("email", userData.email);
 
     setUser(userData);
+    window.dispatchEvent(new Event("authChanged"));
+
     return userData;
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    localStorage.removeItem("name");
-    localStorage.removeItem("email");
+    clearAuthStorage();
     setUser(null);
   };
 
