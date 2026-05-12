@@ -22,6 +22,7 @@ import {
   Loader2,
 } from "lucide-react";
 import api from "../../services/api";
+import AdminSidebar from "../components/AdminSidebar";
 
 const emptyForm = {
   vendorName: "",
@@ -163,74 +164,7 @@ function VendorManagement() {
 
   return (
     <div className="flex h-screen bg-slate-50 overflow-hidden font-sans">
-      <aside className="hidden lg:flex flex-col w-64 bg-slate-900 text-slate-300 shadow-xl z-10">
-        <div className="p-6 border-b border-slate-800">
-          <h1 className="text-2xl font-bold text-white tracking-tight">
-            AutoLogistics
-          </h1>
-          <p className="text-sm text-indigo-400 mt-1">Admin Portal</p>
-        </div>
-
-        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-          <NavItem
-            to="/admin/dashboard"
-            icon={<LayoutDashboard size={20} />}
-            label="Dashboard"
-            active={location.pathname === "/admin/dashboard"}
-          />
-          <NavItem
-            to="/admin/reports"
-            icon={<BarChart3 size={20} />}
-            label="Financial Reports"
-            active={location.pathname === "/admin/reports"}
-          />
-          <NavItem
-            to="/admin/parts"
-            icon={<Package size={20} />}
-            label="Parts Inventory"
-            active={location.pathname === "/admin/parts"}
-          />
-          <NavItem
-            to="/admin/purchase-invoice"
-            icon={<ShoppingCart size={20} />}
-            label="Purchase Invoices"
-            active={location.pathname === "/admin/purchase-invoice"}
-          />
-          <NavItem
-            to="/admin/vendors"
-            icon={<Building2 size={20} />}
-            label="Vendor Management"
-            active={location.pathname === "/admin/vendors"}
-          />
-          <NavItem
-            to="/admin/staff"
-            icon={<Users size={20} />}
-            label="Staff Management"
-            active={location.pathname === "/admin/staff"}
-          />
-          <NavItem
-            to="/admin/notifications"
-            icon={<Bell size={20} />}
-            label="Notifications"
-            active={location.pathname === "/admin/notifications"}
-          />
-
-          <div className="pt-4 mt-4 border-t border-slate-800">
-            <NavItem
-              to="/admin/profile"
-              icon={<User size={20} />}
-              label="Profile"
-              active={location.pathname === "/admin/profile"}
-            />
-            <NavItem
-              to="/admin/staff"
-              icon={<Shield size={20} />}
-              label="Role Management"
-              active={location.pathname === "/admin/staff"}
-            />
-          </div>
-        </nav>
-      </aside>
+      <AdminSidebar />
 
       <main className="flex-1 flex flex-col h-screen overflow-hidden">
         <header className="bg-white border-b border-slate-200 px-8 py-5 flex justify-between items-center z-10 sticky top-0">

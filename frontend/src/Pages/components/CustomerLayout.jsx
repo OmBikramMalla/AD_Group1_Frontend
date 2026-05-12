@@ -14,9 +14,11 @@ import {
   Package,
   Wrench,
   Lock,
+  Home,
 } from "lucide-react";
 
 const NAV_ITEMS = [
+  { to: "/", label: "Home", icon: Home },
   { to: "/customer/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/customer/profile", label: "My Profile", icon: User },
   { to: "/customer/appointments", label: "Appointments", icon: Calendar },
@@ -34,7 +36,7 @@ export default function CustomerLayout() {
 
   const handleLogout = () => {
     logout();
-    navigate("/login", { replace: true });
+    navigate("/", { replace: true });
   };
 
   return (
